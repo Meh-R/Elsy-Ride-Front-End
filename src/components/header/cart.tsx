@@ -14,6 +14,14 @@ import orderService from "@/services/order";
 import toast from "react-hot-toast";
 import { Context } from "@/context/context";
 import { AuthProps, CartHasProduct } from "@/utils/types";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+import CheckoutForm from "../stripe/CheckoutForm";
+import { useRouter } from "next/navigation";
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+);
 
 const Cart = () => {
   const [cartHasProductList, setCartHasProductList] = useState<
@@ -23,6 +31,8 @@ const Cart = () => {
   const { reload, setReload } = useContext(Context);
   const [quantities, setQuantities] = useState<{ [key: string]: number }>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const router = useRouter();
 
   const refreshCart = async () => {
     try {
@@ -78,7 +88,11 @@ const Cart = () => {
     return total + element.product.price * quantity;
   }, 0);
 
-  const handleBuy = async () => {
+  const handleBuy = () => {
+    setShowPaymentForm(true);
+  };
+
+  const onPaymentSuccess = async () => {
     if (!user || !user.cart) {
       toast.error("Cart not found for the user.");
       return;
@@ -118,6 +132,10 @@ const Cart = () => {
       setCartHasProductList([]);
       setQuantities({});
       setReload(new Date().getTime());
+
+      setTimeout(() => {
+        router.push("/myOrder");
+      }, 2000);
     } catch (error) {
       console.error("Error creating orders:", error);
       toast.error("An error occurred during purchase.");
@@ -199,6 +217,14 @@ const Cart = () => {
             Buy Now
           </Button>
         </div>
+        {showPaymentForm && (
+          <Elements stripe={stripePromise}>
+            <CheckoutForm
+              total={totalGeneral}
+              onPaymentSuccess={onPaymentSuccess}
+            />
+          </Elements>
+        )}
       </SheetContent>
     </Sheet>
   );
