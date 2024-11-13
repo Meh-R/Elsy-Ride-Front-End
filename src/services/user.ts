@@ -31,9 +31,9 @@ const userService = {
     }
   },
 
-  async getAllUsers(page: number) {
+  async getAllUsers() {
     try {
-      const response = await api.get(`/all/${page}`, {
+      const response = await api.get(`/all/`, {
         headers: { Authorization: getAuthorizationHeader() },
       });
       return response.data;

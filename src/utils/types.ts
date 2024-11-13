@@ -1,4 +1,5 @@
 export type AuthProps = {
+  id?: string;
   firstName: string;
   lastName: string;
   adresse: string;
@@ -10,7 +11,6 @@ export type AuthProps = {
 };
 
 export interface CartHasProduct {
-  // cart: Cart[];
   id: string;
   productId: string;
   product: Product;
@@ -22,7 +22,6 @@ export interface UpdateCartHasProductDto {
   quantity?: number;
   isActive?: boolean;
 }
-// interface Cart {}
 
 export type LogProps = {
   email: string;
@@ -69,6 +68,7 @@ export interface Order {
   cartHasProduct?: CartHasProduct;
 }
 export type UserUpdateDto = {
+  id?: string;
   email?: string;
   firstName?: string;
   lastName?: string;

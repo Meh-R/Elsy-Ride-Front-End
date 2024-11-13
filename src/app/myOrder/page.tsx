@@ -79,6 +79,12 @@ const OrdersPage = () => {
               <Link className="mr-5 mb-1" href={`/productPageAdmin`}>
                 Product Management
               </Link>
+              <Link className="mr-5 mb-1" href={`/User`}>
+                User
+              </Link>
+              <Link className="mr-5 mb-1" href={`/order`}>
+                Order
+              </Link>
             </>
           )}
         </div>
@@ -102,6 +108,12 @@ const OrdersPage = () => {
                     </Link>
                     <Link href={`/productPageAdmin`} className="mb-2">
                       Product Management
+                    </Link>
+                    <Link className="mr-5 mb-1" href={`/User`}>
+                      User
+                    </Link>
+                    <Link className="mr-5 mb-1" href={`/order`}>
+                      Order
                     </Link>
                   </>
                 )}

@@ -108,9 +108,20 @@ const Page = ({ params }: { params: { id: string } }) => {
               Home
             </Link>
             {isAdmin() && (
-              <Link className="mr-5 mb-1" href={`/order`}>
-                Order
-              </Link>
+              <>
+                <Link className="mr-5 mb-1" href={`/categoryPageAdmin`}>
+                  Category Management
+                </Link>
+                <Link className="mr-5 mb-1" href={`/productPageAdmin`}>
+                  Product Management
+                </Link>
+                <Link className="mr-5 mb-1" href={`/order`}>
+                  Order
+                </Link>
+                <Link className="mr-5 mb-1" href={`/User`}>
+                  User
+                </Link>
+              </>
             )}
           </div>
 
@@ -127,9 +138,20 @@ const Page = ({ params }: { params: { id: string } }) => {
                     Home
                   </Link>
                   {isAdmin() && (
-                    <Link href={`/order`} className="mb-2">
-                      Order
-                    </Link>
+                    <>
+                      <Link className="mr-5 mb-1" href={`/categoryPageAdmin`}>
+                        Category Management
+                      </Link>
+                      <Link className="mr-5 mb-1" href={`/productPageAdmin`}>
+                        Product Management
+                      </Link>
+                      <Link href={`/order`} className="mb-2">
+                        Order
+                      </Link>
+                      <Link className="mr-5 mb-1" href={`/User`}>
+                        User
+                      </Link>
+                    </>
                   )}
                 </div>
               </DropdownMenuContent>

@@ -1,4 +1,6 @@
 "use client";
+
+import React, { useEffect, useState } from "react";
 import Header from "@/components/header/Header";
 import ButtonCreateProduct from "@/components/header/ButtonCreateProduct";
 import {
@@ -7,7 +9,6 @@ import {
   productByCategory,
 } from "@/services/product";
 import { Category, Product } from "@/utils/types";
-import React, { useEffect, useState } from "react";
 import { deleteProduct } from "@/services/product";
 import toast from "react-hot-toast";
 import Link from "next/link";
@@ -41,7 +42,6 @@ const Page = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       let response;
-
       if (text1) {
         response = await searchProducts(text1);
       } else if (selectedCategory) {
@@ -51,16 +51,9 @@ const Page = () => {
       }
 
       let sortedProducts = response.data;
-
-      if (isSortedByPrice) {
-        sortedProducts = sortedProducts.sort(
-          (a: any, b: any) => b.price - a.price
-        );
-      } else {
-        sortedProducts = sortedProducts.sort(
-          (a: any, b: any) => a.price - b.price
-        );
-      }
+      sortedProducts = isSortedByPrice
+        ? sortedProducts.sort((a: any, b: any) => b.price - a.price)
+        : sortedProducts.sort((a: any, b: any) => a.price - b.price);
 
       setProductList(sortedProducts);
     };
@@ -87,15 +80,14 @@ const Page = () => {
   };
 
   async function productDelete(elementId: string) {
-    await deleteProduct(elementId)
-      .then(() => {
-        toast.success("Product deleted");
-        setIsReloadNeeded((prev) => prev + 1);
-      })
-      .catch((e) => {
-        toast.error("Ça n'a pas fonctionné.");
-        console.error(e);
-      });
+    try {
+      await deleteProduct(elementId);
+      toast.success("Product deleted");
+      setIsReloadNeeded((prev) => prev + 1);
+    } catch (e) {
+      toast.error("Deletion failed.");
+      console.error(e);
+    }
   }
 
   return (
@@ -118,12 +110,19 @@ const Page = () => {
                   <Link href={`/myHomePage`} className="mb-2">
                     Home
                   </Link>
-                  <Link href={`/categoryPageAdmin`} className="mb-2">
-                    Category Management
-                  </Link>
-                  <Link className="mr-5 mb-1" href={`/order`}>
-                    Order
-                  </Link>
+                  {isAdmin && (
+                    <>
+                      <Link href={`/categoryPageAdmin`} className="mb-2">
+                        Category Management
+                      </Link>
+                      <Link href={`/order`} className="mb-2">
+                        Order
+                      </Link>
+                      <Link href={`/User`} className="mb-2">
+                        User
+                      </Link>
+                    </>
+                  )}
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -133,12 +132,19 @@ const Page = () => {
             <Link href={`/myHomePage`} className="mb-1">
               Home
             </Link>
-            <Link href={`/categoryPageAdmin`} className="mb-1">
-              Category Management
-            </Link>
-            <Link className="mr-5 mb-1" href={`/order`}>
-              Order
-            </Link>
+            {isAdmin && (
+              <>
+                <Link href={`/categoryPageAdmin`} className="mb-1">
+                  Category Management
+                </Link>
+                <Link href={`/order`} className="mb-1">
+                  Order
+                </Link>
+                <Link href={`/User`} className="mb-1">
+                  User
+                </Link>
+              </>
+            )}
           </div>
         </Header>
 

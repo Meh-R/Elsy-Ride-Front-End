@@ -76,6 +76,9 @@ const AdminCategoriesPage = () => {
                       <Link href={`/order`} className="mb-2">
                         Order
                       </Link>
+                      <Link className="mr-5 mb-1" href={`/User`}>
+                        User
+                      </Link>
                     </>
                   )}
                 </div>
@@ -94,6 +97,9 @@ const AdminCategoriesPage = () => {
                 </Link>
                 <Link href={`/order`} className="mb-1">
                   Order
+                </Link>
+                <Link className="mr-5 mb-1" href={`/User`}>
+                  User
                 </Link>
               </>
             )}

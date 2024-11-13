@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import Header from "@/components/header/Header";
 import orderService from "@/services/order";
@@ -19,6 +18,11 @@ const OrdersPage = () => {
   const [filterStatus, setFilterStatus] = useState<"pending" | "send">(
     "pending"
   );
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true); // Ensures the component is rendered only on the client side
+  }, []);
 
   const fetchOrders = async (status: "pending" | "send") => {
     try {
@@ -26,31 +30,33 @@ const OrdersPage = () => {
       setOrders(data);
       console.log(data);
     } catch (error) {
-      toast.error("No order");
-      console.error(error);
+      toast.error("Failed to fetch orders.");
+      console.error("Error fetching orders:", error);
     }
   };
 
   useEffect(() => {
-    fetchOrders(filterStatus);
-  }, [filterStatus]);
+    if (isClient) {
+      fetchOrders(filterStatus);
+    }
+  }, [filterStatus, isClient]);
 
   const handleStatusChange = async (
     orderId: string | undefined,
     newStatus: string
   ) => {
     if (!orderId) {
-      toast.error("ID de commande non valide.");
+      toast.error("Invalid order ID.");
       return;
     }
 
     try {
       await orderService.updateOrder(orderId, { status: newStatus });
-      toast.success("Statut mis à jour avec succès !");
+      toast.success("Order status updated successfully!");
       fetchOrders(filterStatus);
     } catch (error) {
-      toast.error("Erreur lors de la mise à jour du statut.");
-      console.error(error);
+      toast.error("Error updating order status.");
+      console.error("Error updating order status:", error);
     }
   };
 
@@ -61,20 +67,25 @@ const OrdersPage = () => {
     return false;
   };
 
+  if (!isClient) return null;
+
   return (
     <div>
       <Header>
-        <div className="hidden sm:flex mr-5 ">
-          <Link className="mr-5 mb-1" href={`/myHomePage`}>
+        <div className="hidden sm:flex mr-5">
+          <Link className="mr-5 mb-1" href="/myHomePage">
             Home
           </Link>
           {isAdmin() && (
             <>
-              <Link className="mr-5 mb-1" href={`/categoryPageAdmin`}>
+              <Link className="mr-5 mb-1" href="/categoryPageAdmin">
                 Category Management
               </Link>
-              <Link className="mr-5 mb-1" href={`/productPageAdmin`}>
+              <Link className="mr-5 mb-1" href="/productPageAdmin">
                 Product Management
+              </Link>
+              <Link className="mr-5 mb-1" href={`/User`}>
+                User
               </Link>
             </>
           )}
@@ -89,16 +100,19 @@ const OrdersPage = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-auto bg-white shadow-lg z-50">
               <div className="p-2 flex flex-col">
-                <Link href={`/myHomePage`} className="mb-2">
+                <Link href="/myHomePage" className="mb-2">
                   Home
                 </Link>
                 {isAdmin() && (
                   <>
-                    <Link href={`/categoryPageAdmin`} className="mb-2">
+                    <Link href="/categoryPageAdmin" className="mb-2">
                       Category Management
                     </Link>
-                    <Link href={`/productPageAdmin`} className="mb-2">
+                    <Link href="/productPageAdmin" className="mb-2">
                       Product Management
+                    </Link>
+                    <Link className="mr-5 mb-1" href={`/User`}>
+                      User
                     </Link>
                   </>
                 )}
@@ -109,7 +123,7 @@ const OrdersPage = () => {
       </Header>
 
       <div className="p-6 max-w-4xl mx-auto">
-        <h2 className="text-2xl font-bold text-center mb-4">Order</h2>
+        <h2 className="text-2xl font-bold text-center mb-4">Orders</h2>
 
         <div className="flex justify-center space-x-4 mb-8">
           <button
@@ -120,7 +134,7 @@ const OrdersPage = () => {
             }`}
             onClick={() => setFilterStatus("pending")}
           >
-            En Attente
+            Pending
           </button>
           <button
             className={`px-6 py-2 rounded-full font-semibold ${
@@ -130,7 +144,7 @@ const OrdersPage = () => {
             }`}
             onClick={() => setFilterStatus("send")}
           >
-            Envoyé
+            Sent
           </button>
         </div>
 
@@ -148,45 +162,44 @@ const OrdersPage = () => {
                 >
                   <div className="flex justify-between items-center">
                     <h3 className="text-lg font-semibold text-gray-800">
-                      Commande #
-                      {order.id?.slice(0, 8).toUpperCase() || "Inconnue"}
+                      Order #{order.id?.slice(0, 8).toUpperCase() || "Unknown"}
                     </h3>
                     <p className="text-sm text-gray-500">
                       {order.purchaseDate
                         ? new Date(order.purchaseDate).toLocaleDateString(
-                            "fr-FR"
+                            "en-US"
                           )
-                        : "Date inconnue"}
+                        : "Unknown date"}
                     </p>
                   </div>
 
                   <div className="mt-4">
                     <p className="text-gray-700">
-                      <span className="font-semibold">Nom:</span>{" "}
-                      {order.cart?.user?.firstName || "Nom inconnu"}
+                      <span className="font-semibold">Name:</span>{" "}
+                      {order.cart?.user?.firstName || "Unknown name"}
                     </p>
                     <p className="text-gray-700">
-                      <span className="font-semibold">Prénom:</span>{" "}
-                      {order.cart?.user?.lastName || "Prénom inconnu"}
+                      <span className="font-semibold">Last Name:</span>{" "}
+                      {order.cart?.user?.lastName || "Unknown last name"}
                     </p>
                     <p className="text-gray-700">
-                      <span className="font-semibold">Adresse:</span>{" "}
-                      {order.cart?.user?.adresse || "Adresse inconnue"}
+                      <span className="font-semibold">Address:</span>{" "}
+                      {order.cart?.user?.adresse || "Unknown address"}
                     </p>
                     <p className="text-gray-700">
-                      <span className="font-semibold">Ville:</span>{" "}
-                      {order.cart?.user?.city || "Ville inconnue"}
+                      <span className="font-semibold">City:</span>{" "}
+                      {order.cart?.user?.city || "Unknown city"}
                     </p>
                     <p className="text-gray-700">
-                      <span className="font-semibold">Code Postal:</span>{" "}
-                      {order.cart?.user?.postaleCode || "Code postal inconnu"}
+                      <span className="font-semibold">Postal Code:</span>{" "}
+                      {order.cart?.user?.postaleCode || "Unknown postal code"}
                     </p>
                     <p className="text-gray-700">
                       <span className="font-semibold">Total:</span>{" "}
                       {order.total} $
                     </p>
                     <p className="text-gray-700">
-                      <span className="font-semibold">Statut:</span>{" "}
+                      <span className="font-semibold">Status:</span>{" "}
                       <span
                         className={`${
                           order.status === "pending"
@@ -194,7 +207,7 @@ const OrdersPage = () => {
                             : "text-green-500"
                         }`}
                       >
-                        {order.status === "pending" ? "En Attente" : "Envoyé"}
+                        {order.status === "pending" ? "Pending" : "Sent"}
                       </span>
                     </p>
                   </div>
@@ -202,22 +215,22 @@ const OrdersPage = () => {
                   {associatedProduct?.product && (
                     <div className="mt-4 p-4 border rounded-lg bg-gray-50">
                       <h4 className="font-semibold text-gray-800">
-                        Produit Commandé:
+                        Ordered Product:
                       </h4>
                       <p className="text-gray-700">
-                        <span className="font-semibold">Nom:</span>{" "}
+                        <span className="font-semibold">Name:</span>{" "}
                         {associatedProduct.product.name}
                       </p>
                       <p className="text-gray-700">
-                        <span className="font-semibold">Quantité:</span>{" "}
-                        {associatedProduct.quantity || "Quantité inconnue"}
+                        <span className="font-semibold">Quantity:</span>{" "}
+                        {associatedProduct.quantity || "Unknown quantity"}
                       </p>
                     </div>
                   )}
 
                   <div className="mt-4">
                     <label className="text-gray-600 font-semibold">
-                      Modifier le Statut:
+                      Change Status:
                     </label>
                     <select
                       value={order.status}
@@ -226,8 +239,8 @@ const OrdersPage = () => {
                       }
                       className="mt-2 px-4 py-2 border rounded w-full"
                     >
-                      <option value="pending">En Attente</option>
-                      <option value="send">Envoyé</option>
+                      <option value="pending">Pending</option>
+                      <option value="send">Sent</option>
                     </select>
                   </div>
                 </div>
@@ -235,7 +248,7 @@ const OrdersPage = () => {
             })
           ) : (
             <p className="text-center text-gray-500">
-              Aucun ordre trouvé pour le statut sélectionné.
+              No orders found for the selected status.
             </p>
           )}
         </div>

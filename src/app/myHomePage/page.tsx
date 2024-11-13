@@ -98,6 +98,9 @@ const Page = () => {
                   <Link className="mr-5 mb-1" href={`/order`}>
                     Order
                   </Link>
+                  <Link className="mr-5 mb-1" href={`/User`}>
+                    User
+                  </Link>
                 </>
               )}
             </BurgerCreate>
@@ -114,6 +117,9 @@ const Page = () => {
                 </Link>
                 <Link className="mr-5 mb-1" href={`/order`}>
                   Order
+                </Link>
+                <Link className="mr-5 mb-1" href={`/User`}>
+                  User
                 </Link>
               </>
             )}

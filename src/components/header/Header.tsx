@@ -6,8 +6,9 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import Image from "next/image";
-import Link from "next/link";
+
 import Cart from "./cart";
+import Link from "next/link";
 
 const Header = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -34,7 +35,7 @@ const Header = ({ children }: { children: React.ReactNode }) => {
                     <FaRegUserCircle className="text-3xl mr-5" />
                   </span>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-auto bg-white flex flex-col items-center">
+                <DropdownMenuContent className="w-auto bg-white flex flex-col items-center justify-center">
                   <button
                     onClick={() => {
                       window.localStorage.removeItem("token");
@@ -42,12 +43,15 @@ const Header = ({ children }: { children: React.ReactNode }) => {
                       window.alert("Logged out successfully");
                       window.location.href = "/";
                     }}
-                    className="text-black m-1 mx-5"
+                    className="text-black m-2 "
                   >
                     Log out
                   </button>
-                  <Link className="mr-5 mb-1" href="/myOrder">
+                  <Link className="m-2" href="/myOrder">
                     My order
+                  </Link>
+                  <Link className="m-2" href="/UpdateProfile">
+                    UpdateProfile
                   </Link>
                 </DropdownMenuContent>
               </DropdownMenu>
