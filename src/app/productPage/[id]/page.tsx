@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Header from "@/components/header/Header";
 import { Context } from "@/context/context";
-import { createCartHasProduct, productById } from "@/services/product";
+import { productById } from "@/services/product";
 import { Product } from "@/utils/types";
 import Link from "next/link";
 import toast from "react-hot-toast";
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { RxHamburgerMenu } from "react-icons/rx";
+import { createCartHasProduct } from "@/services/cartHasProduct";
 
 const Page = ({ params }: { params: { id: string } }) => {
   const [detailProduct, setDetailsProduct] = useState<Product>();

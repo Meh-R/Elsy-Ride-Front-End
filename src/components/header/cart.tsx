@@ -3,13 +3,7 @@ import { Button } from "../ui/button";
 import { FaMinus, FaPlus } from "react-icons/fa";
 import { RiDeleteBin2Fill, RiShoppingCart2Line } from "react-icons/ri";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "../ui/sheet";
-import {
-  allCartHasProduct,
-  deleteCartHasProduct,
-  updateCartHasProduct,
-  updateProduct,
-  productById,
-} from "@/services/product";
+import { updateProduct, productById } from "@/services/product";
 import orderService from "@/services/order";
 import toast from "react-hot-toast";
 import { Context } from "@/context/context";
@@ -18,6 +12,11 @@ import { loadStripe } from "@stripe/stripe-js";
 import { Elements } from "@stripe/react-stripe-js";
 import CheckoutForm from "../stripe/CheckoutForm";
 import { useRouter } from "next/navigation";
+import {
+  allCartHasProduct,
+  deleteCartHasProduct,
+  updateCartHasProduct,
+} from "@/services/cartHasProduct";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!

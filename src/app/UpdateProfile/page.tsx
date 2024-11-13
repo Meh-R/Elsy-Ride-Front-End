@@ -31,7 +31,6 @@ const UpdateProfilePage = () => {
       }
     };
 
-    // Client-side only code for role check
     if (typeof window !== "undefined") {
       setIsAdmin(localStorage.getItem("role") === "admin");
     }
