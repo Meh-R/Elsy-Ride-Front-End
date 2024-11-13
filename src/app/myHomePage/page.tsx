@@ -24,9 +24,13 @@ const Page = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [text1, setText1] = useState("");
   const [isSortedByPrice, setIsSortedByPrice] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isMounted, setIsMounted] = useState(false); // Added to check if the component is mounted
   const productsPerPage = 4;
 
   useEffect(() => {
+    setIsMounted(true); // Mark that the component has mounted
+
     const fetchProducts = async () => {
       let response;
       if (text1) {
@@ -45,16 +49,22 @@ const Page = () => {
       setProductList(sortedProducts);
     };
     fetchProducts();
-  }, [isReloadNeeded, isSortedByPrice, selectedCategory, text1]);
-
-  const getCategoryList = async () => {
-    const response = await allCategory();
-    setCategoryList(response.data);
-  };
+  }, [isReloadNeeded, isSortedByPrice, selectedCategory, text1, page]);
 
   useEffect(() => {
+    const getCategoryList = async () => {
+      const response = await allCategory();
+      setCategoryList(response.data);
+    };
     getCategoryList();
   }, [isReloadNeeded]);
+
+  useEffect(() => {
+    // Check if the code is running on the client
+    if (typeof window !== "undefined") {
+      setIsAdmin(localStorage.getItem("role") === "admin");
+    }
+  }, []); // Run once when the component mounts
 
   const paginatedProducts = productList.slice(
     page * productsPerPage,
@@ -71,12 +81,8 @@ const Page = () => {
     setIsSortedByPrice((prev) => !prev);
   };
 
-  const isAdmin = () => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("role") === "admin";
-    }
-    return false;
-  };
+  // Only render client-dependent code when the component is mounted
+  if (!isMounted) return null;
 
   return (
     <Context2.Provider value={{ isReloadNeeded, setIsReloadNeeded }}>
@@ -87,7 +93,7 @@ const Page = () => {
               <Link className="mr-5 mb-1" href={`/myHomePage`}>
                 Home
               </Link>
-              {isAdmin() && (
+              {isAdmin && (
                 <>
                   <Link className="mr-5 mb-1" href={`/categoryPageAdmin`}>
                     Category Management
@@ -107,7 +113,7 @@ const Page = () => {
           </div>
 
           <div className="hidden sm:flex">
-            {isAdmin() && (
+            {isAdmin && (
               <>
                 <Link className="mr-5 mb-1" href={`/categoryPageAdmin`}>
                   Category Management

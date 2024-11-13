@@ -23,7 +23,6 @@ const UpdateProfilePage = () => {
           adresse: userDetails.adresse,
           city: userDetails.city,
           postaleCode: userDetails.postaleCode,
-          email: userDetails.email,
         });
       } catch (error) {
         toast.error("Error retrieving user details.");
@@ -152,14 +151,7 @@ const UpdateProfilePage = () => {
               className="text-black rounded-md indent-3 mb-4 border-2 border-gray-400 w-full"
               placeholder="Postal Code"
             />
-            <input
-              type="email"
-              name="email"
-              value={formData.email || ""}
-              onChange={handleChange}
-              className="text-black rounded-md indent-3 mb-4 border-2 border-gray-400 w-full"
-              placeholder="Email"
-            />
+
             <div className="flex justify-between">
               <button
                 onClick={handleUpdateUser}
