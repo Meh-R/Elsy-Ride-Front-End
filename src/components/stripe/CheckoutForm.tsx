@@ -25,7 +25,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
     try {
       const response = await fetch(
-        "http://localhost:3001/payments/create-payment-intent",
+        `${process.env.NEXT_PUBLIC_API_URL}payments/create-payment-intent`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

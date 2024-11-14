@@ -182,7 +182,7 @@ const Page = ({ params }: { params: { id: string } }) => {
         <div className="md:flex md:flex-row">
           <img
             className="w-full md:w-1/3 md:ml-10 md:mb-10 object-cover object-center"
-            src={`http://localhost:3001/image/view/${detailProduct?.picsProduct}`}
+            src={`${process.env.NEXT_PUBLIC_API_URL}image/view/${detailProduct?.picsProduct}`}
             alt="product"
           />
           <div className="m-20">

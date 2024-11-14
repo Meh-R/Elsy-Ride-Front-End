@@ -121,7 +121,7 @@ const AdminCategoriesPage = () => {
               >
                 <div className="flex items-center">
                   <img
-                    src={`http://localhost:3001/image/view/${category.picsCategory}`}
+                    src={`${process.env.NEXT_PUBLIC_API_URL}image/view/${category.picsCategory}`}
                     alt="category"
                     className="w-16 h-16 rounded-full object-cover mr-4"
                   />

@@ -172,7 +172,7 @@ const Cart = () => {
           >
             <img
               className="w-16 h-16 rounded-full object-cover"
-              src={`http://localhost:3001/image/view/${element.product.picsProduct}`}
+              src={`${process.env.NEXT_PUBLIC_API_URL}image/view/${element.product.picsProduct}`}
               alt={element.product.name}
             />
             <div className="ml-4 flex-grow">

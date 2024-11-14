@@ -206,7 +206,7 @@ const Page = () => {
                   <div className="max-w-xs bg-white cursor-pointer rounded-lg p-2 duration-150 hover:scale-104 hover:shadow-md">
                     <img
                       className="w-full rounded-lg object-cover object-center"
-                      src={`http://localhost:3001/image/view/${item.picsProduct}`}
+                      src={`${process.env.NEXT_PUBLIC_API_URL}image/view/${item.picsProduct}`}
                       alt="product"
                     />
                     {item.category && (

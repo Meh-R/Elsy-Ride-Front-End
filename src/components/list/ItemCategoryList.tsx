@@ -51,7 +51,7 @@ const ItemCategoryList = ({
                   </h2>
                   <img
                     className="w-full h-auto"
-                    src={`http://localhost:3001/image/view/${item.picsCategory}`}
+                    src={`${process.env.NEXT_PUBLIC_API_URL}image/view/${item.picsCategory}`}
                     alt="category"
                   />
                 </div>
