@@ -1,106 +1,109 @@
 "use client";
 import React from "react";
-import {
-  Page,
-  Text,
-  View,
-  Document,
-  StyleSheet,
-  Image,
-} from "@react-pdf/renderer";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import { Order, AuthProps, Product } from "@/utils/types";
 
-const styles = StyleSheet.create({
-  page: {
-    padding: 30,
-  },
-  section: {
-    marginBottom: 10,
-  },
-  header: {
-    fontSize: 20,
-    marginBottom: 20,
-    textAlign: "center",
-    color: "#333",
-  },
-  subHeader: {
-    fontSize: 14,
-    marginBottom: 10,
-    color: "#555",
-  },
-  text: {
-    fontSize: 12,
-    marginBottom: 5,
-    color: "#333",
-  },
-  total: {
-    fontSize: 14,
-    fontWeight: "bold",
-    marginTop: 20,
-  },
-  footer: {
-    fontSize: 10,
-    textAlign: "center",
-    marginTop: 20,
-    color: "#aaa",
-  },
-  logo: {
-    width: 150,
-    marginBottom: 20,
-    alignSelf: "center",
-  },
-});
+const logoUrl = "/Elsy_Bike_transparent.png";
 
-const InvoicePDF: React.FC<{
+type InvoicePDFProps = {
   order: Order;
   user: AuthProps;
   products: { [key: string]: Product };
-}> = ({ order, user, products }) => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      <Image style={styles.logo} src="/Elsy_Bike_transparent.png" />
-      <Text style={styles.header}>
-        Invoice - Order #{order.id?.slice(0, 8).toUpperCase()}
-      </Text>
-      <View style={styles.section}>
-        <Text style={styles.subHeader}>Customer Details</Text>
-        <Text style={styles.text}>
-          Name: {user.firstName} {user.lastName}
-        </Text>
-        <Text style={styles.text}>Address: {user.adresse}</Text>
-        <Text style={styles.text}>City: {user.city}</Text>
-        <Text style={styles.text}>Postal Code: {user.postaleCode}</Text>
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.subHeader}>Order Details</Text>
-        <Text style={styles.text}>
-          Order Date:{" "}
-          {order.purchaseDate
-            ? new Date(order.purchaseDate).toLocaleDateString()
-            : "Unknown"}
-        </Text>
-        <Text style={styles.text}>Total: ${order.total}</Text>
-      </View>
-      <View style={styles.section}>
-        <Text style={styles.subHeader}>Products</Text>
-        {user.cart.cart_Has_Product
-          .filter((item) => item.id === order.cartHasProductId)
-          .map((cartItem) => (
-            <View key={cartItem.id} style={{ marginBottom: 5 }}>
-              <Text style={styles.text}>
-                Name: {products[cartItem.productId]?.name || "Unknown"}
-              </Text>
-              <Text style={styles.text}>
-                Quantity: {cartItem.quantity || "Unknown"}
-              </Text>
-            </View>
-          ))}
-      </View>
-      <Text style={styles.footer}>
-        Thank you for your purchase! Elsy Ride &copy; 2024
-      </Text>
-    </Page>
-  </Document>
-);
+};
 
-export default InvoicePDF;
+const generatePDF = async ({ order, user, products }: InvoicePDFProps) => {
+  const doc = new jsPDF();
+
+  const img = new Image();
+  img.src = logoUrl;
+
+  img.onload = () => {
+    const originalWidth = img.width;
+    const originalHeight = img.height;
+
+    const maxWidth = 50;
+    const aspectRatio = originalHeight / originalWidth;
+    const adjustedHeight = maxWidth * aspectRatio;
+
+    doc.addImage(img, "PNG", 10, 10, maxWidth, adjustedHeight);
+
+    doc.setFontSize(12);
+    doc.text(
+      `Order #${order.id?.slice(0, 8).toUpperCase()}`,
+      10,
+      40 + adjustedHeight - 20
+    );
+    doc.text(
+      `Customer Name: ${user.firstName} ${user.lastName}`,
+      10,
+      50 + adjustedHeight - 20
+    );
+    doc.text(`Address: ${user.adresse}`, 10, 60 + adjustedHeight - 20);
+    doc.text(`City: ${user.city}`, 10, 70 + adjustedHeight - 20);
+    doc.text(`Postal Code: ${user.postaleCode}`, 10, 80 + adjustedHeight - 20);
+    doc.text(`Total: $${order.total}`, 10, 90 + adjustedHeight - 20);
+    doc.text(
+      `Order Date: ${
+        order.purchaseDate
+          ? new Date(order.purchaseDate).toLocaleDateString()
+          : "Unknown"
+      }`,
+      10,
+      100 + adjustedHeight - 20
+    );
+
+    const productRows = user.cart.cart_Has_Product
+      .filter((item) => item.id === order.cartHasProductId)
+      .map((cartItem) => [
+        products[cartItem.productId]?.name || "Unknown",
+        cartItem.quantity?.toString() || "Unknown",
+      ]);
+
+    doc.autoTable({
+      head: [["Product Name", "Quantity"]],
+      body: productRows,
+      startY: 110 + adjustedHeight - 20,
+    });
+
+    doc.setFontSize(10);
+    doc.text(
+      "Thank you for your purchase! Elsy Ride © 2024",
+      10,
+      doc.internal.pageSize.height - 10
+    );
+
+    doc.save(`Invoice_${order.id?.slice(0, 8).toUpperCase()}.pdf`);
+  };
+};
+
+const InvoiceButton: React.FC<InvoicePDFProps> = ({
+  order,
+  user,
+  products,
+}) => {
+  return (
+    <button
+      onClick={() => generatePDF({ order, user, products })}
+      className="flex items-center space-x-2 text-black py-2 px-4 "
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        strokeWidth="1.5"
+        stroke="currentColor"
+        className="w-6 h-6"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z"
+        />
+      </svg>
+      <span>download your invoice</span>
+    </button>
+  );
+};
+
+export default InvoiceButton;
