@@ -21,7 +21,7 @@ const OrdersPage = () => {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
-    setIsClient(true); // Ensures the component is rendered only on the client side
+    setIsClient(true);
   }, []);
 
   const fetchOrders = async (status: "pending" | "send") => {
